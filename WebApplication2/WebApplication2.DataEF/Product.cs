@@ -25,6 +25,7 @@ namespace WebApplication2.DataEF
         public string Description { get; set; }
         public double Price { get; set; }
         public int ProductCategoryID { get; set; }
+        public bool Deleted { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderProduct> OrderProducts { get; set; }

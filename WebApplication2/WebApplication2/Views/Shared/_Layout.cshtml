@@ -22,7 +22,6 @@
             <div class="navbar-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li>@Html.ActionLink("Index page", "Index", "Home")</li>
-					<li>@Html.ActionLink("Products", "Index", "Products")</li>
 					<li>@Html.ActionLink("External API", "Index", "ExternalApi")</li>
 					<li>@Html.ActionLink("About page", "About", "Home")</li>
 					@*<li>@Html.ActionLink("Contacts", "Contact", "Home")</li>*@
@@ -31,8 +30,13 @@
         </div>
     </div>
     <div class="container body-content">
-		<div></div>
-        @RenderBody()
+		<div>
+			@*<div class="container">
+				<div class="row">*@
+					@RenderBody()
+				@*</div>
+			</div>*@
+		</div>
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year – приложение ASP.NET</p>
