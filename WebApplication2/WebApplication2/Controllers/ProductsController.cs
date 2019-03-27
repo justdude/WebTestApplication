@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerce2.Data.Common;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -7,17 +8,20 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using WebApplication2.DataEF;
+using WebApplication2.DataEF.Repositories;
 
 namespace WebApplication2.Controllers
 {
     public class ProductsController : Controller
     {
-        private ECommerceEntities db = new ECommerceEntities();
+        //private ECommerceEntities db = new ECommerceEntities();
+        IRepository<Product> productsDb { get { return DependencyResolver.Current.GetService<IDatabaseService>().ProductRepository; } }
+        IRepository<ProductCategory> productsCatDb { get { return DependencyResolver.Current.GetService<IDatabaseService>().ProductCategoryRepository; } }
 
         // GET: Products
         public ActionResult Index()
         {
-            var products = db.Products.Include(p => p.ProductCategory);
+            var products = productsDb.GetAll();
             return View(products.ToList());
         }
 
@@ -28,7 +32,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productsDb.Find(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
@@ -39,7 +43,7 @@ namespace WebApplication2.Controllers
         // GET: Products/Create
         public ActionResult Create()
         {
-            ViewBag.ProductCategoryID = new SelectList(db.ProductCategories, "ProductCategoryID", "Name");
+            ViewBag.ProductCategoryID = new SelectList(productsCatDb.GetAll(), "ProductCategoryID", "Name");
             return View();
         }
 
@@ -52,12 +56,12 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
-                db.SaveChanges();
+                productsDb.Add(product);
+                productsDb.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ProductCategoryID = new SelectList(db.ProductCategories, "ProductCategoryID", "Name", product.ProductCategoryID);
+            ViewBag.ProductCategoryID = new SelectList(productsCatDb.GetAll(), "ProductCategoryID", "Name", product.ProductCategoryID);
             return View(product);
         }
 
@@ -68,12 +72,12 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productsDb.Find(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ProductCategoryID = new SelectList(db.ProductCategories, "ProductCategoryID", "Name", product.ProductCategoryID);
+            ViewBag.ProductCategoryID = new SelectList(productsCatDb.GetAll(), "ProductCategoryID", "Name", product.ProductCategoryID);
             ViewBag.IsProductDeleted = product.Deleted;
             return View(product);
         }
@@ -87,12 +91,12 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
+                productsDb.Update(product);
+                productsDb.Save();
                 return RedirectToAction("Index");
             }
             ViewBag.IsProductDeleted = product.Deleted;
-            ViewBag.ProductCategoryID = new SelectList(db.ProductCategories, "ProductCategoryID", "Name", product.ProductCategoryID);
+            ViewBag.ProductCategoryID = new SelectList(productsCatDb.GetAll(), "ProductCategoryID", "Name", product.ProductCategoryID);
             return View(product);
         }
 
@@ -103,7 +107,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productsDb.Find(id.Value);
             if (product == null)
             {
                 return HttpNotFound();
@@ -117,11 +121,13 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
+            Product product = productsDb.Find(id);
             product.Deleted = true;
             ViewBag.IsProductDeleted = product.Deleted;
+
+            productsDb.Delete(id);
             //db.Products.Remove(product);
-            db.SaveChanges();
+            productsDb.Save();
             return RedirectToAction("Index");
         }
 
@@ -129,7 +135,7 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                productsDb.Dispose();
             }
             base.Dispose(disposing);
         }

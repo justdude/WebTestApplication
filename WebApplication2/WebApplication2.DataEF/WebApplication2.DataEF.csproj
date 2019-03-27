@@ -52,6 +52,13 @@
     <Compile Include="Citye.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="DatabaseService.cs" />
+    <Compile Include="Common\DbContextFactory.cs" />
+    <Compile Include="Common\Interface\IDbContextFactory.cs" />
+    <Compile Include="Common\Interface\IRepository.cs" />
+    <Compile Include="Common\Interface\IUnitOfWork.cs" />
+    <Compile Include="Common\Repository.cs" />
+    <Compile Include="Common\UnitOfWork.cs" />
     <Compile Include="Countrye.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
@@ -73,6 +80,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ECommerceModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="IDatabaseService.cs" />
     <Compile Include="Order.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
@@ -89,6 +97,10 @@
     <Compile Include="Report.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\CustomerRepository.cs" />
+    <Compile Include="Repositories\OrderRepository.cs" />
+    <Compile Include="Repositories\ProductCategoryRepository.cs" />
+    <Compile Include="Repositories\ProductRepository.cs" />
     <Compile Include="selectQuantitiesSold_Result.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
@@ -124,5 +136,6 @@
       <LastGenOutput>ECommerceModel.cs</LastGenOutput>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
