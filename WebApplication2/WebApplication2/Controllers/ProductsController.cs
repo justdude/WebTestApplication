@@ -15,8 +15,8 @@ namespace WebApplication2.Controllers
     public class ProductsController : Controller
     {
         //private ECommerceEntities db = new ECommerceEntities();
-        IRepository<Product> productsDb { get { return DependencyResolver.Current.GetService<IDatabaseService>().ProductRepository; } }
-        IRepository<ProductCategory> productsCatDb { get { return DependencyResolver.Current.GetService<IDatabaseService>().ProductCategoryRepository; } }
+        IRepository<Product> productsDb { get { return DependencyResolver.Current.GetService<DatabaseService>().ProductRepository; } }
+        IRepository<ProductCategory> productsCatDb { get { return DependencyResolver.Current.GetService<DatabaseService>().ProductCategoryRepository; } }
 
         // GET: Products
         public ActionResult Index()
