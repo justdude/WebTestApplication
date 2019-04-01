@@ -6,18 +6,27 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using ECommerce2.Data.Common;
 using WebApplication2.DataEF;
 
 namespace WebApplication2.Controllers
 {
     public class OrdersController : Controller
     {
-        private ECommerceEntities db = new ECommerceEntities();
+        private IRepository<Order> orderRepository;
+        private IRepository<Customer> csRepository;
+
+        public OrdersController(IRepository<Order> orderRepository,
+            IRepository<Customer> csRepository)
+        {
+            this.orderRepository = orderRepository;
+            this.csRepository = csRepository;
+        }
 
         // GET: Orders
         public ActionResult Index()
         {
-            var orders = db.Orders.Include(o => o.Customer);
+            var orders = orderRepository.GetAll();
             return View(orders.ToList());
         }
 
@@ -28,7 +37,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = orderRepository.Find(id);
             if (order == null)
             {
                 return HttpNotFound();
@@ -39,7 +48,7 @@ namespace WebApplication2.Controllers
         // GET: Orders/Create
         public ActionResult Create()
         {
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name");
+            ViewBag.CustomerID = new SelectList(csRepository.GetAll(), "CustomerID", "Name");
             return View();
         }
 
@@ -52,12 +61,12 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Orders.Add(order);
-                db.SaveChanges();
+                orderRepository.Add(order);
+                orderRepository.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", order.CustomerID);
+            ViewBag.CustomerID = new SelectList(csRepository.GetAll(), "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 
@@ -68,12 +77,12 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = orderRepository.Find(id);
             if (order == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", order.CustomerID);
+            ViewBag.CustomerID = new SelectList(csRepository.GetAll(), "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 
@@ -86,11 +95,11 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(order).State = EntityState.Modified;
-                db.SaveChanges();
+                orderRepository.Update(order);
+                orderRepository.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.CustomerID = new SelectList(db.Customers, "CustomerID", "Name", order.CustomerID);
+            ViewBag.CustomerID = new SelectList(csRepository.GetAll(), "CustomerID", "Name", order.CustomerID);
             return View(order);
         }
 
@@ -101,7 +110,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Order order = db.Orders.Find(id);
+            Order order = orderRepository.Find(id);
             if (order == null)
             {
                 return HttpNotFound();
@@ -114,9 +123,9 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Order order = db.Orders.Find(id);
-            db.Orders.Remove(order);
-            db.SaveChanges();
+            Order order = orderRepository.Find(id);
+            orderRepository.Remove(order);
+            orderRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -124,7 +133,6 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
             }
             base.Dispose(disposing);
         }

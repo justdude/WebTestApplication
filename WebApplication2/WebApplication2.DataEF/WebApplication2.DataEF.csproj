@@ -65,6 +65,7 @@
     <Compile Include="Customer.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="DatabaseUoW.cs" />
     <Compile Include="ECommerceModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -97,6 +98,8 @@
     <Compile Include="Report.cs">
       <DependentUpon>ECommerceModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\CityRepository.cs" />
+    <Compile Include="Repositories\CountryRepository.cs" />
     <Compile Include="Repositories\CustomerRepository.cs" />
     <Compile Include="Repositories\OrderRepository.cs" />
     <Compile Include="Repositories\ProductCategoryRepository.cs" />

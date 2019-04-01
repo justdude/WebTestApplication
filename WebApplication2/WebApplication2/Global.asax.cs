@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using WebApplication2.App_Start;
+//using WebApplication2.App_Start;
 
 namespace WebApplication2
 {
@@ -14,8 +14,8 @@ namespace WebApplication2
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+            //UnityConfig2.RegisterComponents();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
-            UnityConfig.RegisterComponents();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }

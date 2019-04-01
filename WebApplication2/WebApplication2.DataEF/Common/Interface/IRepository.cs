@@ -11,11 +11,11 @@ namespace ECommerce2.Data.Common
         void Add(T item);
 
         IEnumerable<T> Where(Expression<Func<T, bool>> predicate);
-        T Find(int ID);
+        T Find(int? ID);
         IEnumerable<T> GetAll();
 
         void Remove(T item);
-        void Delete(int id);
+        void Delete(int? id);
 
         void Update(T book);
 

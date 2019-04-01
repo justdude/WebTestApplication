@@ -6,18 +6,30 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using ECommerce2.Data.Common;
 using WebApplication2.DataEF;
 
 namespace WebApplication2.Controllers
 {
     public class CustomersController : Controller
     {
-        private ECommerceEntities db = new ECommerceEntities();
+        private readonly IRepository<Customer> csRepository;
+        private IRepository<Countrye> countryRepo;
+        private IRepository<Citye> cityRepo;
+
+        public CustomersController(IRepository<Customer> csRepository,
+                                   IRepository<Citye> cityRepo,
+                                   IRepository<Countrye> countryRepo)
+        {
+            this.csRepository = csRepository;
+            this.cityRepo = cityRepo;
+            this.countryRepo = countryRepo;
+        }
 
         // GET: Customers
         public ActionResult Index()
         {
-            var customers = db.Customers.Include(c => c.Citye).Include(c => c.Countrye);
+            var customers = csRepository.GetAll();
             return View(customers.ToList());
         }
 
@@ -28,7 +40,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = csRepository.Find(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -39,8 +51,8 @@ namespace WebApplication2.Controllers
         // GET: Customers/Create
         public ActionResult Create()
         {
-            ViewBag.CityID = new SelectList(db.Cityes, "CityID", "Name");
-            ViewBag.CountryID = new SelectList(db.Countryes, "CountryID", "CountryName");
+            ViewBag.CityID = new SelectList(cityRepo.GetAll(), "CityID", "Name");
+            ViewBag.CountryID = new SelectList(countryRepo.GetAll(), "CountryID", "CountryName");
             return View();
         }
 
@@ -53,13 +65,13 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Customers.Add(customer);
-                db.SaveChanges();
+                csRepository.Add(customer);
+                csRepository.Save();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CityID = new SelectList(db.Cityes, "CityID", "Name", customer.CityID);
-            ViewBag.CountryID = new SelectList(db.Countryes, "CountryID", "CountryName", customer.CountryID);
+            ViewBag.CityID = new SelectList(cityRepo.GetAll(), "CityID", "Name", customer.CityID);
+            ViewBag.CountryID = new SelectList(countryRepo.GetAll(), "CountryID", "CountryName", customer.CountryID);
             return View(customer);
         }
 
@@ -70,13 +82,13 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = csRepository.Find(id);
             if (customer == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CityID = new SelectList(db.Cityes, "CityID", "Name", customer.CityID);
-            ViewBag.CountryID = new SelectList(db.Countryes, "CountryID", "CountryName", customer.CountryID);
+            ViewBag.CityID = new SelectList(cityRepo.GetAll() , "CityID", "Name", customer.CityID);
+            ViewBag.CountryID = new SelectList(countryRepo.GetAll(), "CountryID", "CountryName", customer.CountryID);
             return View(customer);
         }
 
@@ -89,12 +101,12 @@ namespace WebApplication2.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(customer).State = EntityState.Modified;
-                db.SaveChanges();
+                csRepository.Update(customer);
+                csRepository.Save();
                 return RedirectToAction("Index");
             }
-            ViewBag.CityID = new SelectList(db.Cityes, "CityID", "Name", customer.CityID);
-            ViewBag.CountryID = new SelectList(db.Countryes, "CountryID", "CountryName", customer.CountryID);
+            ViewBag.CityID = new SelectList(cityRepo.GetAll(), "CityID", "Name", customer.CityID);
+            ViewBag.CountryID = new SelectList(countryRepo.GetAll(), "CountryID", "CountryName", customer.CountryID);
             return View(customer);
         }
 
@@ -105,7 +117,7 @@ namespace WebApplication2.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Customer customer = db.Customers.Find(id);
+            Customer customer = csRepository.Find(id);
             if (customer == null)
             {
                 return HttpNotFound();
@@ -118,9 +130,8 @@ namespace WebApplication2.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Customer customer = db.Customers.Find(id);
-            db.Customers.Remove(customer);
-            db.SaveChanges();
+            csRepository.Delete(id);
+            csRepository.Save();
             return RedirectToAction("Index");
         }
 
@@ -128,7 +139,6 @@ namespace WebApplication2.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
             }
             base.Dispose(disposing);
         }

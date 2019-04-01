@@ -1,41 +1,60 @@
-﻿using ECommerce2.Data.Common;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using ECommerce2.Data.Common;
 using Unity;
+using Unity.Injection;
 using Unity.Lifetime;
 using WebApplication2.DataEF;
 using WebApplication2.DataEF.Repositories;
-using WebApplication2.Unity;
 
-namespace WebApplication2.App_Start
+namespace WebApplication2
 {
+    /// <summary>
+    /// Specifies the Unity configuration for the main container.
+    /// </summary>
     public static class UnityConfig
     {
-        public static void RegisterComponents()
+        #region Unity Container
+        private static Lazy<IUnityContainer> container =
+          new Lazy<IUnityContainer>(() =>
+          {
+              var container = new UnityContainer();
+              RegisterTypes(container);
+              return container;
+          });
+
+        /// <summary>
+        /// Configured Unity Container.
+        /// </summary>
+        public static IUnityContainer Container => container.Value;
+        #endregion
+
+        /// <summary>
+        /// Registers the type mappings with the Unity container.
+        /// </summary>
+        /// <param name="container">The unity container to configure.</param>
+        /// <remarks>
+        /// There is no need to register concrete types such as controllers or
+        /// API controllers (unless you want to change the defaults), as Unity
+        /// allows resolving a concrete type even if it was not previously
+        /// registered.
+        /// </remarks>
+        public static void RegisterTypes(IUnityContainer container)
         {
-            var container = new UnityContainer();
+            // NOTE: To load from web.config uncomment the line below.
+            // Make sure to add a Unity.Configuration to the using statements.
+            // container.LoadConfiguration();
 
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container, DependencyResolver.Current));
+            var uow = new DatabaseUoW();
 
-            RegisterDataStorages(container);
+            container.RegisterType<IRepository<Citye>, CityRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<Countrye>, CountryRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<ProductCategory>, ProductCategoryRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<Product>, ProductRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<Customer>, CustomerRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<Order>, OrderRepository>(new InjectionConstructor(uow));
 
-        }
-
-        private static void RegisterDataStorages(UnityContainer container)
-        {
-            var dbService = new DatabaseService();
-
-            container.RegisterInstance<IRepository<Customer>>(dbService.CustomerRepository, new ExternallyControlledLifetimeManager());
-            container.RegisterInstance<IRepository<Order>>(dbService.OrderRepository, new ExternallyControlledLifetimeManager());
-            container.RegisterInstance<IRepository<Product>>(dbService.ProductRepository, new ExternallyControlledLifetimeManager());
-            container.RegisterInstance<IRepository<ProductCategory>>(dbService.ProductCategoryRepository, new ExternallyControlledLifetimeManager());
-
-            container.RegisterInstance<IDatabaseService>(dbService, new ExternallyControlledLifetimeManager());
-
-            var t = container.Resolve<IDatabaseService>();
+            //container.RegisterInstance<IRepository<Customer>>(dbService.CustomerRepository, new ExternallyControlledLifetimeManager());
+            //container.RegisterInstance<IDatabaseService>(dbService, new ExternallyControlledLifetimeManager());
         }
     }
 }

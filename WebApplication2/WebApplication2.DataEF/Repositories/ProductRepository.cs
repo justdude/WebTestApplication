@@ -11,8 +11,14 @@ namespace WebApplication2.DataEF.Repositories
     {
         public ProductRepository(IUnitOfWork uow) : base(uow) { }
 
+        public ProductRepository() : base(new DatabaseUoW())
+        {
+
+        }
+
         public override IEnumerable<Product> GetAll()
         {
+            //Context.Set<Product>().Include(x => x.).ToList();
             return base.GetAll();
         }
     }

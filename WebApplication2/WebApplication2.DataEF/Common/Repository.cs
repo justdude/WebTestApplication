@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ECommerce2.Data.Common
 {
     public class Repository<T> : IDisposable, IRepository<T> where T : class
     {
         protected readonly DbContext Context;
+        public IUnitOfWork UnitOfWork { get; private set; }
 
-        public Repository(IUnitOfWork unitOfWork)
+        public Repository(IUnitOfWork unitOfWork)//unitOfWork)
         {
+            UnitOfWork = unitOfWork;
             Context = unitOfWork.Context;
         }
 
@@ -25,7 +28,7 @@ namespace ECommerce2.Data.Common
             return Context.Set<T>().Where(predicate);
         }
 
-        public virtual T Find(int ID)
+        public virtual T Find(int? ID)
         {
             return Context.Set<T>().Find(ID);
         }
@@ -42,10 +45,12 @@ namespace ECommerce2.Data.Common
 
         public void Update(T book)
         {
-            Context.Entry<T>(book).State = EntityState.Modified;
+            Context.Set<T>().Attach(book);
+            var entry = Context.Entry(book);
+            entry.State = System.Data.Entity.EntityState.Modified;
         }
 
-        public void Delete(int id)
+        public void Delete(int? id)
         {
             var data = Find(id);
             if (data != null)
@@ -54,7 +59,12 @@ namespace ECommerce2.Data.Common
 
         public int Save()
         {
-            return Context.SaveChanges();
+            return UnitOfWork.SaveChanges();
+        }
+
+        public async Task<int> SaveAsync()
+        {
+            return await UnitOfWork.SaveChangesAsync();
         }
 
         private bool disposed = false;

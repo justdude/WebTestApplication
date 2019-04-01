@@ -3,7 +3,7 @@ using WebApplication2.DataEF.Repositories;
 
 namespace WebApplication2.DataEF
 {
-    public interface IDatabaseService: IUnitOfWork
+    public interface IDatabaseService
     {
         CustomerRepository CustomerRepository { get; }
         OrderRepository OrderRepository { get; }
