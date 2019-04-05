@@ -7,9 +7,11 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
 using Unity;
 using WebApplication2.DataEF;
 using WebApplication2.DataEF.Repositories;
+using WebApplication2.Models;
 
 namespace WebApplication2.Controllers
 {
@@ -24,6 +26,7 @@ namespace WebApplication2.Controllers
             //dbService = new DatabaseService();
             this.prodRepository = prodRepository;
             this.prodCategRepo = prodCategRepo;
+
         }
 
         // GET: Products
@@ -53,6 +56,7 @@ namespace WebApplication2.Controllers
         // GET: Products/Create
         public ActionResult Create()
         {
+           
             ViewBag.ProductCategoryID = new SelectList(prodCategRepo.GetAll(), "ProductCategoryID", "Name");
             return View();
         }
@@ -62,11 +66,14 @@ namespace WebApplication2.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,Name,Description,Price,ProductCategoryID")] Product product)
+        public ActionResult Create([Bind(Include = "ProductID,Name,Description,Price,ProductCategoryID")] ProductViewModel product)
         {
+
             if (ModelState.IsValid)
             {
-                prodRepository.Add(product);
+                Mapper.Initialize(cfg => cfg.CreateMap<ProductViewModel, Product>());
+                var pr = Mapper.Map<ProductViewModel,Product>(product);
+                prodRepository.Add(pr);
                 prodRepository.Save();
                 return RedirectToAction("Index");
             }
@@ -135,7 +142,7 @@ namespace WebApplication2.Controllers
             product.Deleted = true;
             ViewBag.IsProductDeleted = product.Deleted;
 
-            prodRepository.Delete(id);
+            //prodRepository.Delete(id);
             //db.Products.Remove(product);
             prodRepository.Save();
             return RedirectToAction("Index");

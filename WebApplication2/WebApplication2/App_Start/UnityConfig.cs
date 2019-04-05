@@ -44,14 +44,14 @@ namespace WebApplication2
             // Make sure to add a Unity.Configuration to the using statements.
             // container.LoadConfiguration();
 
-            var uow = new DatabaseUoW();
+            container.RegisterType<IUnitOfWork, DatabaseUoW>();
 
-            container.RegisterType<IRepository<Citye>, CityRepository>(new InjectionConstructor(uow));
-            container.RegisterType<IRepository<Countrye>, CountryRepository>(new InjectionConstructor(uow));
-            container.RegisterType<IRepository<ProductCategory>, ProductCategoryRepository>(new InjectionConstructor(uow));
-            container.RegisterType<IRepository<Product>, ProductRepository>(new InjectionConstructor(uow));
-            container.RegisterType<IRepository<Customer>, CustomerRepository>(new InjectionConstructor(uow));
-            container.RegisterType<IRepository<Order>, OrderRepository>(new InjectionConstructor(uow));
+            container.RegisterType<IRepository<Citye>, CityRepository>();
+            container.RegisterType<IRepository<Countrye>, CountryRepository>();
+            container.RegisterType<IRepository<ProductCategory>, ProductCategoryRepository>();
+            container.RegisterType<IRepository<Product>, ProductRepository>();
+            container.RegisterType<IRepository<Customer>, CustomerRepository>();
+            container.RegisterType<IRepository<Order>, OrderRepository>();
 
             //container.RegisterInstance<IRepository<Customer>>(dbService.CustomerRepository, new ExternallyControlledLifetimeManager());
             //container.RegisterInstance<IDatabaseService>(dbService, new ExternallyControlledLifetimeManager());
