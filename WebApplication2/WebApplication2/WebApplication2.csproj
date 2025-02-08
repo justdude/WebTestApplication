@@ -176,7 +176,9 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="App_Start\UnityConfig2.cs" />
     <Compile Include="App_Start\UnityMvcActivator.cs" />
+    <Compile Include="Controllers\SiteInfoController.cs" />
     <Compile Include="Models\ProductViewModels.cs" />
+    <Compile Include="Services\WeatherForecastProvider.cs" />
     <Compile Include="Unity\UnityDependencyResolver.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Controllers\ExternalApiController.cs" />
@@ -240,9 +242,11 @@
     <Content Include="Views\Customers\Details.cshtml" />
     <Content Include="Views\Customers\Edit.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
+    <Content Include="Views\SiteInfo\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
